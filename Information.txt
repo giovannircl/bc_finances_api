@@ -1,0 +1,11 @@
+Libraries needed:
+
+npm i express
+npm i -D nodemon
+npm i pg
+----------------------------
+.env:
+
+PORT=3000
+DATABASE_URL=postgres://postgres:123456@localhost:5432/bc_finances
+JWT_SECRET=secret_key_bc_finances_api
