@@ -9,6 +9,9 @@ app.use(express.json());
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+const paymentMethodRoutes = require('./routes/paymentMethodRoutes');
+app.use('/api', paymentMethodRoutes);
+
 const pool = require('./config/db');
 
 app.listen(port, () => {
