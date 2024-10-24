@@ -7,9 +7,9 @@ const insertPaymentMethod = async (req, res) => {
             return res.status(400).json({ error: 'Method and description are required' });
         }
 
-        const existingDescription = await PaymentMethod.getPaymentMethodByName(description);
-        if (existingDescription) {
-            return res.status(400).json({ error: 'This payment method already exists.' });
+        const existingMethod = await PaymentMethod.getPaymentMethodByNameAndDescription(method, description);
+        if (existingMethod) {
+            return res.status(400).json({ error: 'This payment method already exists with the same name and description.' });
         }
 
         const paymentMethodId = await PaymentMethod.insertPaymentMethod(method, description);
@@ -59,7 +59,7 @@ const editPaymentMethod = async (req, res) => {
     const { id } = req.params;
     const { name, description } = req.body;
     try {
-        const updatedPaymentMethod = await PaymentMethod.editPaymentMethod(id, name, description);
+        const updatedPaymentMethod = await PaymentMethod.editPaymentMethod(id, method, description);
         if (!updatedPaymentMethod) {
             return res.status(404).json({ error: 'Payment method not found' });
         }

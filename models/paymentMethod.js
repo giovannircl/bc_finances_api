@@ -19,6 +19,14 @@ const PaymentMethod = {
         return result.rows;
     },
 
+    getPaymentMethodByNameAndDescription: async (method, description) => {
+        const result = await pool.query(
+            'SELECT * FROM payment_method WHERE method = $1 AND description = $2',
+            [method, description]
+        );
+        return result.rows[0];
+    },
+
     deletePaymentMethod: async (id) => {
         await pool.query('DELETE FROM payment_method WHERE id_payment_method = $1', [id]);
     },
