@@ -16,7 +16,7 @@ const PaymentMethod = {
 
     getPaymentMethodByName: async (name) => {
         const result = await pool.query('SELECT * FROM payment_method WHERE method = $1', [name]);
-        return result.rows[0];
+        return result.rows;
     },
 
     deletePaymentMethod: async (id) => {
