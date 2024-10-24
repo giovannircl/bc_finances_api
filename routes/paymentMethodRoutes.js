@@ -6,13 +6,14 @@ const {
     deletePaymentMethod,
     editPaymentMethod
 } = require('../controllers/paymentMethodController');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-router.post('/payment-methods', insertPaymentMethod);
-router.get('/payment-methods', getAllPaymentMethods);
-router.get('/payment-methods/:method', getPaymentMethodByName);
-router.delete('/payment-methods/:id', deletePaymentMethod);
-router.put('/payment-methods/:id', editPaymentMethod);
+router.post('/payment-methods', auth, insertPaymentMethod);
+router.get('/payment-methods', auth, getAllPaymentMethods);
+router.get('/payment-methods/:method', auth, getPaymentMethodByName);
+router.delete('/payment-methods/:id', auth, deletePaymentMethod);
+router.put('/payment-methods/:id', auth, editPaymentMethod);
 
 module.exports = router;
