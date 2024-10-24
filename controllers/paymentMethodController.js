@@ -57,7 +57,7 @@ const deletePaymentMethod = async (req, res) => {
 
 const editPaymentMethod = async (req, res) => {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { method, description } = req.body;
     try {
         const updatedPaymentMethod = await PaymentMethod.editPaymentMethod(id, method, description);
         if (!updatedPaymentMethod) {
