@@ -20,6 +20,7 @@ const insertPaymentMethod = async (req, res) => {
     }
 };
 
+
 const getAllPaymentMethods = async (req, res) => {
     try {
         const paymentMethods = await PaymentMethod.getAllPaymentMethods();
