@@ -1,18 +1,18 @@
 const PaymentMethod = require('../models/paymentMethod');
 
 const insertPaymentMethod = async (req, res) => {
-    const { method, details } = req.body;
+    const { method } = req.body;
     try {
-        if (!method || !details) {
+        if (!method) {
             return res.status(400).json({ error: 'Method and details are required' });
         }
 
-        const existingMethod = await PaymentMethod.getPaymentMethodByNameAnddetails(method, details);
+        const existingMethod = await PaymentMethod.getPaymentMethodByNameAnddetails(method);
         if (existingMethod) {
             return res.status(400).json({ error: 'This payment method already exists with the same name and details.' });
         }
 
-        const paymentMethodId = await PaymentMethod.insertPaymentMethod(method, details);
+        const paymentMethodId = await PaymentMethod.insertPaymentMethod(method);
         res.status(201).json({ message: 'Payment method created', paymentMethodId });
     } catch (error) {
         console.error('Error inserting payment method:', error);
