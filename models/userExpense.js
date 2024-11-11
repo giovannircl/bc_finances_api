@@ -10,12 +10,7 @@ const UserExpense = {
         return result.rows[0].id_user_expense;
     },
 
-    getAllUserExpenses: async () => {
-        const result = await pool.query('SELECT * FROM user_expense');
-        return result.rows;
-    },
-
-    getUserExpensesByUserId: async (userId) => {
+    getUserExpenses: async (userId) => {
         const result = await pool.query(
             'SELECT * FROM user_expense WHERE id_user = $1',
             [userId]

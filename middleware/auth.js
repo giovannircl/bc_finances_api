@@ -7,13 +7,13 @@ const auth = (req, res, next) => {
     return res.status(403).json({ error: 'Token not provided' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-    req.userId = decoded.id; 
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+    req.userId = decoded.userId; 
     next();
-  });
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
 };
 
 module.exports = auth;

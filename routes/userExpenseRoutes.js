@@ -1,8 +1,7 @@
 const express = require('express');
 const {
     insertUserExpense,
-    getAllUserExpenses,
-    getUserExpensesByUserId,
+    getUserExpenses,
     deleteUserExpense,
     editUserExpense,
     getLastFiveUserExpenses
@@ -12,10 +11,9 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/user-expense', auth, insertUserExpense);
-router.get('/user-expense', auth, getAllUserExpenses);
-router.get('/user-expense/:userId', auth, getUserExpensesByUserId);
+router.get('/user-expenses', auth, getUserExpenses);
 router.delete('/user-expense/:id', auth, deleteUserExpense);
 router.put('/user-expense/:id', auth, editUserExpense);
-router.get('/user-expense/last-five/:userId', auth, getLastFiveUserExpenses);
+router.get('/user-expense/last-five', auth, getLastFiveUserExpenses);
 
 module.exports = router;
