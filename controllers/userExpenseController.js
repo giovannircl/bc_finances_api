@@ -2,20 +2,20 @@ const PaymentMethod = require('../models/paymentMethod');
 const UserExpense = require('../models/userExpense');
 
 const insertUserExpense = async (req, res) => {
-    const { id_user, id_user_payment_method, id_category, expense_amount, expense_desc } = req.body;
+    const { id_user, id_payment_method, id_category, expense_amount, expense_desc } = req.body;
 
     try {
-        if (!id_user || !id_user_payment_method || !id_category || !expense_amount) {
+        if (!id_user || !id_payment_method || !id_category || !expense_amount) {
             return res.status(400).json({ error: 'This fields are required: id_user, id_payment_method, id_category and expense_amount' });
         }
         const paymentMethods = await PaymentMethod.getAllPaymentMethodsByUser(id_user);
-        const paymentMethodExists = paymentMethods.some(method => method.id_payment_method === Number(id_user_payment_method));
+        const paymentMethodExists = paymentMethods.some(method => method.id_user_payment_method === Number(id_payment_method));
         
         if (!paymentMethodExists) {
             return res.status(404).json({ error: 'Payment method not found for this user' });
         }
 
-        const userExpenseId = await UserExpense.insertUserExpense(id_user, id_user_payment_method, id_category, expense_amount, expense_desc);
+        const userExpenseId = await UserExpense.insertUserExpense(id_user, id_payment_method, id_category, expense_amount, expense_desc);
         res.status(201).json({ message: 'User expense created successfully', userExpenseId });
     } catch (error) {
         console.error('Error inserting user expense:', error);

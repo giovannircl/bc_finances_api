@@ -8,21 +8,21 @@ const PaymentMethod = {
         );
 
         // More accurate name.
-        const id_user_payment_method = result.rows[0].id_payment_method;
+        const id_payment_method = result.rows[0].id_payment_method;
 
         await pool.query(
-            'INSERT INTO user_payment_method (id_user, id_user_payment_method) VALUES ($1, $2)',
-            [id_user, id_user_payment_method]
+            'INSERT INTO user_payment_method (id_user, id_payment_method) VALUES ($1, $2)',
+            [id_user, id_payment_method]
         );
 
-        return id_user_payment_method;
+        return id_payment_method;
     },
 
     getAllPaymentMethodsByUser: async (id_user) => {
         const result = await pool.query(
-            `SELECT pm.id_payment_method, pm.method
+            `SELECT upm.id_user_payment_method, pm.method
              FROM payment_method pm
-             JOIN user_payment_method upm ON pm.id_payment_method = upm.id_user_payment_method
+             JOIN user_payment_method upm ON pm.id_payment_method = upm.id_payment_method
              WHERE upm.id_user = $1`,
             [id_user]
         );
@@ -34,7 +34,7 @@ const PaymentMethod = {
         const result = await pool.query(
             `SELECT pm.id_payment_method, pm.method
              FROM payment_method pm
-             JOIN user_payment_method upm ON pm.id_payment_method = upm.id_user_payment_method
+             JOIN user_payment_method upm ON pm.id_payment_method = upm.id_payment_method
              WHERE upper(pm.method) LIKE upper($1) AND upm.id_user = $2`,
             [`%${method}%`, id_user]
         );
