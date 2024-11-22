@@ -1,21 +1,27 @@
 const PaymentMethod = require('../models/paymentMethod');
 const UserExpense = require('../models/userExpense');
+const Category = require('../models/category');
 
 const insertUserExpense = async (req, res) => {
-    const { id_user, id_payment_method, id_category, expense_amount, expense_desc } = req.body;
+    const { id_user_payment_method, id_category, expense_amount, expense_desc } = req.body;
 
     try {
-        if (!id_user || !id_payment_method || !id_category || !expense_amount) {
-            return res.status(400).json({ error: 'This fields are required: id_user, id_payment_method, id_category and expense_amount' });
+        if (!id_user_payment_method || !id_category || !expense_amount) {
+            return res.status(400).json({ error: 'This fields are required: id_user_payment_method, id_category and expense_amount' });
         }
-        const paymentMethods = await PaymentMethod.getAllPaymentMethodsByUser(id_user);
-        const paymentMethodExists = paymentMethods.some(method => method.id_user_payment_method === Number(id_payment_method));
+        const paymentMethods = await PaymentMethod.getAllPaymentMethodsByUser(req.userId);
+        const paymentMethodExists = paymentMethods.some(method => method.id_user_payment_method === Number(id_user_payment_method));
         
         if (!paymentMethodExists) {
             return res.status(404).json({ error: 'Payment method not found for this user' });
         }
 
-        const userExpenseId = await UserExpense.insertUserExpense(id_user, id_payment_method, id_category, expense_amount, expense_desc);
+        const isValidCategory = await Category.isValidCategory(id_category);
+        if (!isValidCategory) {
+            return res.status(400).json({ error: 'Invalid category ID' });
+        }
+
+        const userExpenseId = await UserExpense.insertUserExpense(id_user_payment_method, id_category, expense_amount, expense_desc);
         res.status(201).json({ message: 'User expense created successfully', userExpenseId });
     } catch (error) {
         console.error('Error inserting user expense:', error);
@@ -47,13 +53,25 @@ const deleteUserExpense = async (req, res) => {
 
 const editUserExpense = async (req, res) => {
     const { id } = req.params;
-    const { id_payment_method, id_category, expense_amount, expense_desc } = req.body;
+    const { id_user_payment_method, id_category, expense_amount, expense_desc } = req.body;
 
     try {
-        const updatedUserExpense = await UserExpense.editUserExpense(id, id_payment_method, id_category, expense_amount, expense_desc);
+        const isValid = await UserExpense.isValidUserPaymentMethod(req.userId, id_user_payment_method);
+        if (!isValid) {
+            return res.status(400).json({ error: 'Invalid payment method for this user' });
+        }
+
+        const isValidCategory = await Category.isValidCategory(id_category);
+        if (!isValidCategory) {
+            return res.status(400).json({ error: 'Invalid category ID' });
+        }
+
+        const updatedUserExpense = await UserExpense.editUserExpense(id, id_user_payment_method, id_category, expense_amount, expense_desc);
+
         if (!updatedUserExpense) {
             return res.status(404).json({ error: 'User expense not found' });
         }
+
         res.status(200).json({ message: 'User expense updated successfully', updatedUserExpense });
     } catch (error) {
         console.error('Error editing user expense:', error);

@@ -7,7 +7,6 @@ const PaymentMethod = {
             [method]
         );
 
-        // More accurate name.
         const id_payment_method = result.rows[0].id_payment_method;
 
         await pool.query(

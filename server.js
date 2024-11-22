@@ -10,6 +10,9 @@ app.use(cors({origin: true, credentials: true}));
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+const categoryRoutes = require('./routes/categoryRoutes');
+app.use('/api', categoryRoutes);
+
 const paymentMethodRoutes = require('./routes/paymentMethodRoutes');
 app.use('/api', paymentMethodRoutes);
 

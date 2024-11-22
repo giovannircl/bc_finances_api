@@ -35,9 +35,9 @@ const getPaymentMethodsByName = async (req, res) => {
     const { method } = req.params;
 
     try {
-        const paymentMethod = await PaymentMethod.getPaymentMethodsByNameAndUser(method, req.userId);
+        const paymentMethods = await PaymentMethod.getPaymentMethodsByNameAndUser(method, req.userId);
 
-        if (!paymentMethod) {
+        if (!paymentMethods || paymentMethods.length === 0) {
             return res.status(404).json({ error: 'Payment method not found for this user' });
         }
 
