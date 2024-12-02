@@ -8,7 +8,7 @@ require('dotenv').config();
 const apiInstance = new brevo.TransactionalEmailsApi()
 apiInstance.setApiKey(
   brevo.TransactionalEmailsApiApiKeys.apiKey,
-  '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'
+  process.env.BREVO_API_KEY
 )
 
 const register = async (req, res) => {
