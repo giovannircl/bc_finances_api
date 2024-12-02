@@ -9,4 +9,3 @@ npm i pg
 PORT=3000
 DATABASE_URL=postgres://postgres:123456@localhost:5432/bc_finances
 JWT_SECRET=secret_key_bc_finances_api
-BREVO_API_KEY=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
