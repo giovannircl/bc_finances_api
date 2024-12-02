@@ -28,7 +28,7 @@ const User = {
 
   findUserByResetToken: async (token) => {
     const result = await pool.query(
-      'SELECT * FROM app_user WHERE reset_token = $1',
+      'SELECT * FROM app_user WHERE email = $1',
       [token]
     );
     return result.rows[0];
@@ -40,7 +40,12 @@ const User = {
       [hashedPassword, userId]
     );
   },
-
+  updatePasswordByEmail: async (email, hashedPassword) => {
+    await pool.query(
+      'UPDATE app_user SET password = $1 WHERE email = $2',
+      [hashedPassword, email]
+    );
+  },
   clearResetToken: async (userId) => {
     await pool.query(
       'UPDATE app_user SET reset_token = NULL WHERE id_user = $1',

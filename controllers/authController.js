@@ -2,7 +2,14 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const crypto = require('crypto');
+const brevo = require("@getbrevo/brevo");
 require('dotenv').config();
+
+const apiInstance = new brevo.TransactionalEmailsApi()
+apiInstance.setApiKey(
+  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  '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'
+)
 
 const register = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -97,5 +104,32 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const resetPasswordByEmail = async (req,res) => {
+  const {email, newPassword} = req.body;
+  try {
+    const user = await User.findUserByEmail(email);
+    if (!user) {
+      return res.status(400).json({error: "This email doesn't belong to a registered user."})
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await User.updatePasswordByEmail(email, hashedPassword);
+    res.status(200).json({ message: 'Password has been reset successfully' });
+  } catch (error) {
+    console.error('Error in reset password:', error);
+    res.status(500).json({ error: 'Error processing reset password' });
+  }
+}
 
-module.exports = { register, login, forgotPassword, resetPassword };
+const sendEmail = async (req, res) => {
+  const {email, code} = req.body;
+  const sendSmtpEmail = new brevo.SendSmtpEmail()
+  sendSmtpEmail.sender = {name: "Ibrahim", email: "ibrahim.sma1206@gmail.com"}
+  sendSmtpEmail.subject = 'Helloooo'
+  sendSmtpEmail.to = [{email: email, name: 'BC Finances'}]
+  sendSmtpEmail.htmlContent = `Your code is ${code}` ; // Generate the code randomly
+  await apiInstance.sendTransacEmail(sendSmtpEmail);
+  res.status(201).json({message: "Email sent with code!"})
+}
+
+
+module.exports = { register, login, forgotPassword, resetPassword, sendEmail, resetPasswordByEmail };
