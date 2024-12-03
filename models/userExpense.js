@@ -12,12 +12,10 @@ const UserExpense = {
 
     getUserExpenses: async (userId) => {
         const result = await pool.query(
-            `
-            SELECT ue.* 
-            FROM user_expense ue
-            INNER JOIN user_payment_method upm ON upm.id_user_payment_method = ue.id_user_payment_method
-            WHERE upm.id_user = $1
-            `,
+            `SELECT ue.* 
+             FROM user_expense ue
+             INNER JOIN user_payment_method upm ON upm.id_user_payment_method = ue.id_user_payment_method
+             WHERE upm.id_user = $1`,
             [userId]
         );
         return result.rows;
@@ -33,7 +31,7 @@ const UserExpense = {
              WHERE id_user = $1 AND id_user_payment_method = $2`,
             [userId, id_user_payment_method]
         );
-        return result.rowCount > 0; 
+        return result.rowCount > 0;
     },
 
     editUserExpense: async (id_user_expense, id_user_payment_method, id_category, expense_amount, expense_desc) => {
@@ -55,6 +53,20 @@ const UserExpense = {
              ORDER BY ue.dt_purchase DESC 
              LIMIT 5`,
             [userId]
+        );
+        return result.rows;
+    },
+
+    getExpensesByCategory: async (userId, startDate, endDate) => {
+        const result = await pool.query(
+            `SELECT c.category_name AS category, SUM(ue.expense_amount) AS total_amount
+             FROM user_expense ue
+             JOIN user_payment_method upm ON upm.id_user_payment_method = ue.id_user_payment_method
+             JOIN category c ON c.id_category = ue.id_category
+             WHERE upm.id_user = $1 AND ue.dt_purchase BETWEEN $2 AND $3
+             GROUP BY c.category_name
+             ORDER BY total_amount DESC`,
+            [userId, startDate, endDate]
         );
         return result.rows;
     }
