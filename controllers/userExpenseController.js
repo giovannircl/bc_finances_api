@@ -92,10 +92,36 @@ const getLastFiveUserExpenses = async (req, res) => {
     }
 };
 
+const getUserExpensesByCategory = async (req, res) => {
+    const { year, month } = req.query;
+
+    try {
+        if (!year || !month) {
+            return res.status(400).json({ error: 'Year and month are required' });
+        }
+
+        const startDate = new Date(`${year}-${month.padStart(2, '0')}-01`);
+        const endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + 1);
+
+        const expenses = await UserExpense.getExpensesByCategory(req.userId, startDate, endDate);
+
+        if (expenses.length === 0) {
+            return res.status(404).json({ error: 'No expenses found for this period' });
+        }
+
+        res.status(200).json(expenses);
+    } catch (error) {
+        console.error('Error fetching user expenses by category:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
     insertUserExpense,
     getUserExpenses,
     deleteUserExpense,
     editUserExpense,
-    getLastFiveUserExpenses
+    getLastFiveUserExpenses,
+    getUserExpensesByCategory
 };
